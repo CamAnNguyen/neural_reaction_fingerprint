@@ -1,0 +1,8 @@
+['prob_0', 'prob_1', 'prob_2', 'prob_3', 'prob_4', 'prob_5', 'prob_6', 'prob_7', 'prob_8', 'prob_9', 'prob_10', 'prob_11', 'prob_12', 'prob_13', 'prob_14', 'prob_15', 'prob_16']
+{'target_name_arr': ['prob_0', 'prob_1', 'prob_2', 'prob_3', 'prob_4', 'prob_5', 'prob_6', 'prob_7', 'prob_8', 'prob_9', 'prob_10', 'prob_11', 'prob_12', 'prob_13', 'prob_14', 'prob_15', 'prob_16'], 'N_train': 3600, 'smiles_name': 'smiles'}
+{'dropout': 0, 'batch_size': 100, 'init_bias': 0.85, 'num_outputs': 17, 'fp_type': 'neural', 'num_epochs': 20, 'normalize': 1, 'fp_depth': 4, 'conv_width': 20, 'h1_size': 100, 'activation': <function relu at 0x7fd0af89f578>}
+########################
+1 run out of 100
+(-3.1241210698205704, -4.3083629751508985, 141.0)
+Task params {'learn_rate': 0.043975573, 'param_scale': 0.013455559, 'batch_size': 100, 'num_epochs': 20} {'normalize': 1, 'activation_function': <function relu at 0x7fd0af89f578>, 'nll_func': <function categorical_nll at 0x7fd0af89fc08>, 'num_outputs': 17, 'layer_sizes': [282, 100]}
+Neural Fingerprints with neural net

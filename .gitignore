@@ -115,6 +115,8 @@ talks/*.synctex.gz
 talks/*.brf
 
 /master_run/balanced_set/*
+/master_run/output/*
+/master_run/scratch/*
 !/master_run/balanced_set/.keep
 
 /data/*.dat

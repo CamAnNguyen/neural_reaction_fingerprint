@@ -26,23 +26,23 @@ target_name_array = ['prob_'+str(i) for i in range(17)]
 print target_name_array
 
 
-task_params  = {'smiles_name' : 'smiles', 
-               'target_name_arr' : target_name_array} 
+task_params  = {'smiles_name' : 'smiles',
+               'target_name_arr' : target_name_array}
 
 
 other_param_dict = {'num_epochs' : 20,
                     # Production run? Keep batch size same for now
                     'batch_size' : 100, 'normalize'  :1 ,
-                    'dropout'    : 0, 'fp_depth': 4, 'activation' :relu, 
+                    'dropout'    : 0, 'fp_depth': 4, 'activation' :relu,
                     'fp_type' : 'neural',
-                    'h1_size' : 100, 'conv_width': 20, 'num_outputs': 17, 
-                    'init_bias': 0.85} 
+                    'h1_size' : 100, 'conv_width': 20, 'num_outputs': 17,
+                    'init_bias': 0.85}
 
 # Production run:
-max_num_runs  = 100 
-        
-X = pkl.load(open('train_inputs.dat')) 
-y = pkl.load(open('train_targets.dat')) 
+max_num_runs  = 100
+
+X = pkl.load(open('train_inputs.dat'))
+y = pkl.load(open('train_targets.dat'))
 
 task_params['N_train'] = np.shape(X)[0]
 
@@ -69,19 +69,19 @@ def myFunc(params):
 #!# uniform fp length? Should be integer...
 train_space = (hp.uniform('log_learn_rate', -4, -1.5),
                hp.uniform('log_init_scale', -5, -2),
-               # for morgan: 
+               # for morgan:
                #hp.quniform('fp_length', 10, 1024 ,1))
-               # for neural: 
-               hp.quniform('fp_length',1,190,1))
+               # for neural:
+               hp.quniform('fp_length', 1, 190, 1))
 
 if __name__ == '__main__':
 #if False:
-    print task_params 
+    print task_params
     print other_param_dict
     #print train_fps
     trials = Trials()
     best = fmin( fn = myFunc, space = train_space, algo=tpe.suggest, max_evals = max_num_runs, trials = trials)
-    
+
     print 'best:', best
     print 'trials:'
     for trial in trials.trials[:2]:
@@ -91,4 +91,3 @@ if __name__ == '__main__':
     #!# Set every time
     with open('neural3_bal_200each_train_100runs_class31.dat','w') as resultf:
         pkl.dump(trials, resultf)
-

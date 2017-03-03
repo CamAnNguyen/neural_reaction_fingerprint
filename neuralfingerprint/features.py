@@ -12,7 +12,6 @@ def atom_features(atom):
                     one_of_k_encoding(atom.GetDegree(), [0, 1, 2, 3, 4, 5]) +
                     one_of_k_encoding_unk(atom.GetTotalNumHs(), [0, 1, 2, 3, 4]) +
                     one_of_k_encoding_unk(atom.GetImplicitValence(), [0, 1, 2, 3, 4, 5]) +
-                    one_of_k_encoding_unk(atom.GetFormalCharge(), [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5])+
                     [atom.GetIsAromatic()])
 
 def bond_features(bond):

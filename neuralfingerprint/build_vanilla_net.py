@@ -1,5 +1,4 @@
 import autograd.numpy as np
-from autograd.scipy.misc import logsumexp
 
 from util import memoize, WeightsParser
 from rdkit_utils import smiles_to_fps
@@ -19,26 +18,8 @@ def sigmoid(x):
 def mean_squared_error(predictions, targets):
     return np.mean((predictions - targets)**2, axis=0)
 
-def categorical_nll(predictions, targets, num_outputs):
-    # Targets is array N x num_outputs, representing probs. for each reaction type 
-    # Output: single value of the mean of log probabilities.
-    
-    #log Boltzmann normalization
-    predictions = predictions - logsumexp(predictions, axis=1, keepdims=True) 
-    #print np.shape(predictions)
-    
-    if not np.shape(predictions) == np.shape(targets): 
-        raise Exception("mismatch predictions {}, targets {}".format(str(np.shape(predictions)[0]), str(np.shape(targets)[0])))
-
-    nll = 0.0
-
-    # For loop to avoid numerical accuracy when target prob is 0
-    for ex_id in range(np.shape(predictions)[0]):
-        for outcome_id in range(num_outputs):
-            if targets[ex_id, outcome_id] > 0.01: 
-                nll = nll+ targets[ex_id, outcome_id]*predictions[ex_id, outcome_id] 
-
-    return -nll/float(np.shape(targets)[0])
+def categorical_nll(predictions, targets):
+    return -np.mean(predictions * targets)
 
 def binary_classification_nll(predictions, targets):
     """Predictions is a real number, whose sigmoid is the probability that
@@ -47,13 +28,11 @@ def binary_classification_nll(predictions, targets):
     label_probabilities = pred_probs * targets + (1 - pred_probs) * (1 - targets)
     return -np.mean(np.log(label_probabilities))
 
-def build_standard_net(layer_sizes, normalize, L2_reg=0.0, L1_reg=0.0, activation_function=relu,
-                       nll_func=mean_squared_error, num_outputs=1):
+def build_standard_net(layer_sizes, normalize, L2_reg, L1_reg=0.0, activation_function=relu,
+                       nll_func=mean_squared_error):
     """Just a plain old neural net, nothing to do with molecules.
     layer sizes includes the input size."""
-    # How to change the output size here?
-    layer_sizes = layer_sizes + [num_outputs]
-    # Add number of outputs here
+    layer_sizes = layer_sizes + [1]
 
     parser = WeightsParser()
     for i, shape in enumerate(zip(layer_sizes[:-1], layer_sizes[1:])):
@@ -70,17 +49,12 @@ def build_standard_net(layer_sizes, normalize, L2_reg=0.0, L1_reg=0.0, activatio
                 if normalize:
                     cur_units = batch_normalize(cur_units)
                 cur_units = activation_function(cur_units)
-        # Note, cur_units will not be normalized for the categorical_nll case.
-        #    will let categorical_nll handle it.
-        return cur_units
-        
+        return cur_units[:, 0]
 
     def loss(w, X, targets):
         assert len(w) > 0
         log_prior = -L2_reg * np.dot(w, w) / len(w) - L1_reg * np.mean(np.abs(w))
         preds = predictions(w, X)
-        if nll_func == categorical_nll:
-            return nll_func(preds, targets, num_outputs) - log_prior
         return nll_func(preds, targets) - log_prior
 
     return loss, predictions, parser
